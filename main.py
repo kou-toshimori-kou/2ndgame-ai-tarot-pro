@@ -11,14 +11,17 @@ st.set_page_config(
 )
 
 # --- APIキーの設定 ---
-# StreamlitのSecretsからキーを読み込む
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 except:
-    st.error("APIキーが設定されていません。Secretsに GEMINI_API_KEY を設定してください。")
+    st.error("APIキーが設定されていません。")
 
-# --- AIモデルの準備（Gemini 1.5 Pro） ---
-model = genai.GenerativeModel('gemini-1.5-pro')
+# --- AIモデルの準備（ここを変更しました：Flashモデル） ---
+try:
+    model = genai.GenerativeModel('gemini-1.5-flash')
+except:
+    # 万が一Flashがダメなら、最も安定している旧モデルを使う保険
+    model = genai.GenerativeModel('gemini-pro')
 
 # --- タイトルと説明 ---
 st.title("🔮 AIタロット占い Pro")
@@ -53,13 +56,12 @@ if submit_button:
         col1, col2 = st.columns([1, 2])
         
         with col1:
-            # カード画像のプレースホルダー
             st.image("https://placehold.co/200x350/222/FFF?text=Tarot", caption=f"{card}")
         
         with col2:
             st.subheader(f"🎴 結果: {card} ({position})")
             
-            # AIへの指示（プロンプト）
+            # AIへの指示
             prompt = f"""
             あなたは神秘的で思慮深い、ベテランのタロット占い師です。
             以下の相談者に対して、引いたカードの意味を元に、具体的で前向きなアドバイスをしてください。
