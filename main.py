@@ -154,7 +154,7 @@ if submit_button:
             st.markdown(card_result)
             
             if position == "逆位置":
-                st.caption("※逆位置が出ました。詳しくは利守航までご連絡を。")
+                st.caption("※逆位置が出ました。正位置の持つ意味が「弱まる」「裏返る」と言われています。")
 
         # 2. Gmail通知（相談内容がある場合のみ）
         if user_input:
