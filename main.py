@@ -1,6 +1,7 @@
 import streamlit as st
 import random
 import time
+import requests  # 通信用の道具を追加
 
 # --- ページ設定 ---
 st.set_page_config(
@@ -9,11 +10,23 @@ st.set_page_config(
     layout="centered"
 )
 
+# --- LINE通知を送る関数 ---
+def send_line_notify(message):
+    try:
+        url = "https://notify-api.line.me/api/notify"
+        token = st.secrets["LINE_TOKEN"] # Secretsからトークンを取得
+        headers = {"Authorization": "Bearer " + token}
+        payload = {"message": message}
+        requests.post(url, headers=headers, data=payload)
+    except Exception as e:
+        # 通知に失敗してもアプリは止めない（ユーザーにはバレないようにする）
+        print(f"LINE通知エラー: {e}")
+
 # --- タイトル ---
 st.title("🃏 利守航のタロット占い")
 st.markdown("心を落ち着けてボタンを押してください。\n利守航からの運命のメッセージが届きます。")
 
-# --- カードの画像URLリスト（ウェイト版） ---
+# --- 画像リスト ---
 TAROT_IMAGES = {
     "0. 愚者": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
     "1. 魔術師": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
@@ -39,7 +52,7 @@ TAROT_IMAGES = {
     "21. 世界": "https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg"
 }
 
-# --- カードの意味とアドバイスデータ（利守航スペシャル） ---
+# --- データリスト（利守航スペシャル） ---
 TAROT_DATA = {
     "0. 愚者": "【意味】始まり、自由、純粋、冒険\n\n【アドバイス】利守航と一緒に、思い切って新しい旅に出かけましょう！",
     "1. 魔術師": "【意味】創造、自信、スキルの発揮\n\n【アドバイス】何かを始めるチャンスです。利守航のアイデアを借りるとうまくいきます。",
@@ -82,17 +95,19 @@ if submit_button:
         card_image_url = TAROT_IMAGES[card_name]
         position = random.choice(["正位置", "逆位置"])
         
+        # ★ここでLINEに通知を送る
+        if user_input:
+            notification_message = f"\n【相談着信】\n相談内容: {user_input}\n結果: {card_name} ({position})"
+            send_line_notify(notification_message)
+        
         st.divider()
         col1, col2 = st.columns([1, 2])
         
         with col1:
-            # カード画像
             st.image(card_image_url, caption=card_name)
         
         with col2:
             st.subheader(f"🎴 結果: {card_name} ({position})")
-            
-            # Markdownを使って改行を反映させて表示
             st.markdown(card_result)
             
             if position == "逆位置":
