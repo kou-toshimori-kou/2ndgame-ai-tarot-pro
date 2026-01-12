@@ -64,7 +64,7 @@ def send_gmail_notify(user_name, user_input, card_name, position, advice):
 
 # --- タイトル ---
 # \n を入れることで、両方とも同じ「タイトルサイズ」で2行になります
-st.title("🃏 タロット占いの館\n「タロットシモリ」")
+st.title("🃏 タロット占いの館「タロットシモリ」")
 
 st.markdown("心を落ち着けてボタンを押してください。\n利守航からの運命のメッセージが届きます。")
 
