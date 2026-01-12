@@ -1,19 +1,30 @@
 import streamlit as st
 import random
 import time
+import google.generativeai as genai
 
-# --- ページ設定（アプリのタブ名やアイコン） ---
+# --- ページ設定 ---
 st.set_page_config(
     page_title="Gemini Tarot Pro",
     page_icon="🔮",
     layout="centered"
 )
 
+# --- APIキーの設定 ---
+# StreamlitのSecretsからキーを読み込む
+try:
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+except:
+    st.error("APIキーが設定されていません。Secretsに GEMINI_API_KEY を設定してください。")
+
+# --- AIモデルの準備（Gemini 1.5 Pro） ---
+model = genai.GenerativeModel('gemini-1.5-pro')
+
 # --- タイトルと説明 ---
 st.title("🔮 AIタロット占い Pro")
 st.markdown("""
-ようこそ。ここは星の巡りとAIの叡智が交わる場所です。
-あなたの悩みを入力し、カードを引いてください。
+星の巡りとAIの叡智が、あなたの迷いを照らします。
+心を落ち着けて、相談内容を入力してください。
 """)
 
 # --- 大アルカナ22枚のリスト ---
@@ -24,36 +35,49 @@ TAROT_CARDS = [
     "17. 星", "18. 月", "19. 太陽", "20. 審判", "21. 世界"
 ]
 
-# --- ユーザー入力エリア ---
+# --- ユーザー入力 ---
 with st.form(key='consultation_form'):
-    user_input = st.text_area("相談内容を入力してください（心の迷い、知りたいこと）", height=100)
+    user_input = st.text_area("相談内容（例：転職すべきか迷っています...）", height=100)
     submit_button = st.form_submit_button(label='運命のカードを引く')
 
-# --- 占いの実行処理 ---
+# --- 占いの実行 ---
 if submit_button:
     if not user_input:
-        st.warning("まずは相談内容を教えてください。")
+        st.warning("相談内容を入力してください。")
     else:
-        # 演出：カードをシャッフルしているような待機時間
-        with st.spinner('星の配置を読み解いています...'):
-            time.sleep(2)  # 2秒間の演出
+        # カード抽選
+        card = random.choice(TAROT_CARDS)
+        position = random.choice(["正位置", "逆位置"])
+        
+        st.divider()
+        col1, col2 = st.columns([1, 2])
+        
+        with col1:
+            # カード画像のプレースホルダー
+            st.image("https://placehold.co/200x350/222/FFF?text=Tarot", caption=f"{card}")
+        
+        with col2:
+            st.subheader(f"🎴 結果: {card} ({position})")
             
-            # カードと正位置・逆位置をランダム決定
-            card = random.choice(TAROT_CARDS)
-            position = random.choice(["正位置", "逆位置"])
+            # AIへの指示（プロンプト）
+            prompt = f"""
+            あなたは神秘的で思慮深い、ベテランのタロット占い師です。
+            以下の相談者に対して、引いたカードの意味を元に、具体的で前向きなアドバイスをしてください。
             
-            # --- 結果表示エリア ---
-            st.divider()
-            st.subheader(f"🎴 出たカード: {card} ({position})")
-            
-            # ここに将来、Gemini ProのAPIからの回答が入ります
-            # 今はプレースホルダー（仮の表示）を表示
-            st.success("【システム準備完了】ここにGemini Proによる高度な鑑定結果が表示されます。")
-            
-            # デバッグ用：AIに送る予定の「プロンプト」を表示（開発者向け確認）
-            st.code(f"""
-            あなたはベテランの占い師です。以下の情報で占ってください。
             相談内容: {user_input}
             引いたカード: {card}
             位置: {position}
-            """, language="text")
+            
+            回答の構成:
+            1. **カードの象徴**: このカードが持つ本来の意味（簡潔に）
+            2. **現状の読み解き**: 相談内容とカードを照らし合わせた現状分析
+            3. **未来への導き**: 具体的な行動アドバイス（優しく、背中を押すように）
+            """
+            
+            # AI生成中...
+            with st.spinner('星の声を聴いています...（AI生成中）'):
+                try:
+                    response = model.generate_content(prompt)
+                    st.markdown(response.text)
+                except Exception as e:
+                    st.error(f"エラーが発生しました: {e}")
