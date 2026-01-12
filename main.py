@@ -26,31 +26,30 @@ def send_line_notify(message):
 st.title("🃏 利守航のタロット占い")
 st.markdown("心を落ち着けてボタンを押してください。\n利守航からの運命のメッセージが届きます。")
 
-# --- 画像リスト（修正版） ---
+# --- 画像リスト（完全に別の安定したソースに変更） ---
 TAROT_IMAGES = {
-    "0. 愚者": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
-    "1. 魔術師": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
-    "2. 女教皇": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
-    "3. 女帝": "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg",
-    "4. 皇帝": "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg",
-    "5. 法王": "https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg",
-    # ★修正：恋人のURLを確実なものに変更
-    "6. 恋人": "https://upload.wikimedia.org/wikipedia/en/d/db/RWS_Tarot_06_Lovers.jpg",
-    "7. 戦車": "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg",
-    "8. 力": "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg",
-    "9. 隠者": "https://upload.wikimedia.org/wikipedia/commons/4/4d/RWS_Tarot_09_Hermit.jpg",
-    "10. 運命の輪": "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg",
-    "11. 正義": "https://upload.wikimedia.org/wikipedia/commons/e/e0/RWS_Tarot_11_Justice.jpg",
-    "12. 吊るされた男": "https://upload.wikimedia.org/wikipedia/commons/2/2b/RWS_Tarot_12_Hanged_Man.jpg",
-    "13. 死神": "https://upload.wikimedia.org/wikipedia/commons/d/d7/RWS_Tarot_13_Death.jpg",
-    "14. 節制": "https://upload.wikimedia.org/wikipedia/commons/f/f8/RWS_Tarot_14_Temperance.jpg",
-    "15. 悪魔": "https://upload.wikimedia.org/wikipedia/commons/5/55/RWS_Tarot_15_Devil.jpg",
-    "16. 塔": "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg",
-    "17. 星": "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg",
-    "18. 月": "https://upload.wikimedia.org/wikipedia/commons/7/7f/RWS_Tarot_18_Moon.jpg",
-    "19. 太陽": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg",
-    "20. 審判": "https://upload.wikimedia.org/wikipedia/commons/d/dd/RWS_Tarot_20_Judgement.jpg",
-    "21. 世界": "https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg"
+    "0. 愚者": "https://www.sacred-texts.com/tarot/pkt/img/ar00.jpg",
+    "1. 魔術師": "https://www.sacred-texts.com/tarot/pkt/img/ar01.jpg",
+    "2. 女教皇": "https://www.sacred-texts.com/tarot/pkt/img/ar02.jpg",
+    "3. 女帝": "https://www.sacred-texts.com/tarot/pkt/img/ar03.jpg",
+    "4. 皇帝": "https://www.sacred-texts.com/tarot/pkt/img/ar04.jpg",
+    "5. 法王": "https://www.sacred-texts.com/tarot/pkt/img/ar05.jpg",
+    "6. 恋人": "https://www.sacred-texts.com/tarot/pkt/img/ar06.jpg",
+    "7. 戦車": "https://www.sacred-texts.com/tarot/pkt/img/ar07.jpg",
+    "8. 力": "https://www.sacred-texts.com/tarot/pkt/img/ar08.jpg",
+    "9. 隠者": "https://www.sacred-texts.com/tarot/pkt/img/ar09.jpg",
+    "10. 運命の輪": "https://www.sacred-texts.com/tarot/pkt/img/ar10.jpg",
+    "11. 正義": "https://www.sacred-texts.com/tarot/pkt/img/ar11.jpg",
+    "12. 吊るされた男": "https://www.sacred-texts.com/tarot/pkt/img/ar12.jpg",
+    "13. 死神": "https://www.sacred-texts.com/tarot/pkt/img/ar13.jpg",
+    "14. 節制": "https://www.sacred-texts.com/tarot/pkt/img/ar14.jpg",
+    "15. 悪魔": "https://www.sacred-texts.com/tarot/pkt/img/ar15.jpg",
+    "16. 塔": "https://www.sacred-texts.com/tarot/pkt/img/ar16.jpg",
+    "17. 星": "https://www.sacred-texts.com/tarot/pkt/img/ar17.jpg",
+    "18. 月": "https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg",
+    "19. 太陽": "https://www.sacred-texts.com/tarot/pkt/img/ar19.jpg",
+    "20. 審判": "https://www.sacred-texts.com/tarot/pkt/img/ar20.jpg",
+    "21. 世界": "https://www.sacred-texts.com/tarot/pkt/img/ar21.jpg"
 }
 
 # --- データリスト（利守航スペシャル） ---
@@ -70,56 +69,4 @@ TAROT_DATA = {
     "12. 吊るされた男": "【意味】試練、忍耐、視点を変える\n\n【アドバイス】今は動けなくても大丈夫。利守航の変わった視点を取り入れてみてください。",
     "13. 死神": "【意味】終わりと始まり、変化\n\n【アドバイス】古い習慣は捨てましょう。利守航と共に、新しい自分に生まれ変わる時です。",
     "14. 節制": "【意味】調和、バランス、自制\n\n【アドバイス】無理は禁物です。利守航とお茶でもして、リラックスしましょう。",
-    "15. 悪魔": "【意味】誘惑、束縛\n\n【アドバイス】悪い誘惑には注意！利守航に止めてもらうよう頼んでおきましょう（笑）",
-    "16. 塔": "【意味】崩壊、予期せぬ変化\n\n【アドバイス】ハプニングが起きても大丈夫。利守航がきっと助けに来てくれます。",
-    "17. 星": "【意味】希望、夢、ひらめき\n\n【アドバイス】あなたの夢を利守航に語ってみてください。きっと応援してくれます。",
-    "18. 月": "【意味】不安、曖昧さ\n\n【アドバイス】先が見えなくて不安な夜は、利守航に連絡してみましょう。",
-    "19. 太陽": "【意味】成功、喜び、活力\n\n【アドバイス】運気は最高潮！利守航とパーッと遊びに行くとさらに運気が上がります。",
-    "20. 審判": "【意味】復活、決断、目覚め\n\n【アドバイス】諦めていたことに再挑戦する時です。利守航も背中を押しています。",
-    "21. 世界": "【意味】完成、達成、満足\n\n【アドバイス】最高のハッピーエンドです。利守航と一緒に喜びを分かち合いましょう！"
-}
-
-# --- ユーザー入力 ---
-with st.form(key='tarot_form'):
-    user_name = st.text_input("お名前（ニックネーム）", placeholder="ここにお名前を入力してください")
-    user_input = st.text_area("相談内容（心の中で利守航に問いかけてください）", height=100)
-    submit_button = st.form_submit_button(label='運命のカードを引く')
-
-# --- 占いの実行 ---
-if submit_button:
-    # 名前が空欄の場合は「名無しさん」にする
-    if not user_name:
-        user_name = "名無し"
-
-    # 演出（1.5秒待つ）
-    with st.spinner(f'{user_name}さんの運命を、利守航が占っています...'):
-        time.sleep(1.5)
-        
-        # カードをランダムに選ぶ
-        card_name = random.choice(list(TAROT_DATA.keys()))
-        card_result = TAROT_DATA[card_name]
-        card_image_url = TAROT_IMAGES[card_name]
-        position = random.choice(["正位置", "逆位置"])
-        
-        # ---------------------------------------------------------
-        # ★ここが変更点：先に結果を画面に出す（ユーザーを待たせない）
-        # ---------------------------------------------------------
-        st.divider()
-        col1, col2 = st.columns([1, 2])
-        
-        with col1:
-            st.image(card_image_url, caption=card_name)
-        
-        with col2:
-            st.subheader(f"🎴 結果: {card_name} ({position})")
-            st.markdown(card_result)
-            
-            if position == "逆位置":
-                st.caption("※逆位置が出ました。利守航からのメッセージを、少し慎重に受け取ってください。")
-
-        # ---------------------------------------------------------
-        # ★変更点：画面表示が終わった「後」に、裏でLINE通知を送る
-        # ---------------------------------------------------------
-        if user_input:
-            notification_message = f"\n【相談着信】\n相談者: {user_name} 様\n内容: {user_input}\n結果: {card_name} ({position})"
-            send_line_notify(notification_message)
+    "15. 悪魔": "【意味】誘惑
