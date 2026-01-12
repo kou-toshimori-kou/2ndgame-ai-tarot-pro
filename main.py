@@ -1,7 +1,9 @@
 import streamlit as st
 import random
 import time
-import requests
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 # --- ページ設定 ---
 st.set_page_config(
@@ -10,23 +12,61 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- LINE通知を送る関数 ---
-def send_line_notify(message):
+# --- Gmail通知を送る関数 ---
+def send_gmail_notify(user_name, user_input, card_name, position, advice):
     try:
-        url = "https://notify-api.line.me/api/notify"
-        if "LINE_TOKEN" in st.secrets:
-            token = st.secrets["LINE_TOKEN"]
-            headers = {"Authorization": "Bearer " + token}
-            payload = {"message": message}
-            requests.post(url, headers=headers, data=payload)
+        # Secretsから設定を読み込む
+        gmail_user = st.secrets["GMAIL_USER"]
+        gmail_password = st.secrets["GMAIL_PASSWORD"]
+        
+        # 送り先（自分自身に送る）
+        to_email = gmail_user
+        
+        # メールの件名と本文
+        subject = f"【タロット相談】{user_name}様からの依頼"
+        body = f"""
+        利守航 様
+        
+        新しいタロット相談が届きました。
+        
+        ■相談者
+        {user_name} 様
+        
+        ■相談内容
+        {user_input}
+        
+        ■結果
+        カード: {card_name} ({position})
+        
+        ■アドバイス内容
+        {advice}
+        
+        -------------------------
+        Toshimori Tarot App
+        """
+        
+        # メール作成
+        msg = MIMEMultipart()
+        msg['From'] = gmail_user
+        msg['To'] = to_email
+        msg['Subject'] = subject
+        msg.attach(MIMEText(body, 'plain'))
+        
+        # Gmailサーバーに接続して送信
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(gmail_user, gmail_password)
+        server.send_message(msg)
+        server.quit()
+        
     except Exception as e:
-        print(f"LINE通知エラー: {e}")
+        print(f"メール送信エラー: {e}")
 
 # --- タイトル ---
 st.title("🃏 利守航のタロット占い")
 st.markdown("心を落ち着けてボタンを押してください。\n利守航からの運命のメッセージが届きます。")
 
-# --- 画像リスト（完全に別の安定したソースに変更） ---
+# --- 画像リスト ---
 TAROT_IMAGES = {
     "0. 愚者": "https://www.sacred-texts.com/tarot/pkt/img/ar00.jpg",
     "1. 魔術師": "https://www.sacred-texts.com/tarot/pkt/img/ar01.jpg",
@@ -90,17 +130,17 @@ if submit_button:
     if not user_name:
         user_name = "名無し"
 
-    # 演出（1.5秒待つ）
+    # 演出
     with st.spinner(f'{user_name}さんの運命を、利守航が占っています...'):
         time.sleep(1.5)
         
-        # カードをランダムに選ぶ
+        # カード抽選
         card_name = random.choice(list(TAROT_DATA.keys()))
         card_result = TAROT_DATA[card_name]
         card_image_url = TAROT_IMAGES[card_name]
         position = random.choice(["正位置", "逆位置"])
         
-        # 先に結果を画面に出す
+        # 1. 画面表示
         st.divider()
         col1, col2 = st.columns([1, 2])
         
@@ -114,7 +154,6 @@ if submit_button:
             if position == "逆位置":
                 st.caption("※逆位置が出ました。利守航からのメッセージを、少し慎重に受け取ってください。")
 
-        # 画面表示の後に裏でLINE通知を送る
+        # 2. Gmail通知（相談内容がある場合のみ）
         if user_input:
-            notification_message = f"\n【相談着信】\n相談者: {user_name} 様\n内容: {user_input}\n結果: {card_name} ({position})"
-            send_line_notify(notification_message)
+            send_gmail_notify(user_name, user_input, card_name, position, card_result)
