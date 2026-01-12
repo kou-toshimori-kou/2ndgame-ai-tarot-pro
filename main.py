@@ -16,12 +16,8 @@ try:
 except:
     st.error("APIキーが設定されていません。")
 
-# --- AIモデルの準備（ここを変更しました：Flashモデル） ---
-try:
-    model = genai.GenerativeModel('gemini-1.5-flash')
-except:
-    # 万が一Flashがダメなら、最も安定している旧モデルを使う保険
-    model = genai.GenerativeModel('gemini-pro')
+# --- AIモデルの準備（ここを安定版の gemini-pro にしました） ---
+model = genai.GenerativeModel('gemini-pro')
 
 # --- タイトルと説明 ---
 st.title("🔮 AIタロット占い Pro")
