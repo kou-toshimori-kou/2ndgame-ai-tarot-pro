@@ -13,7 +13,33 @@ st.set_page_config(
 st.title("🃏 タロット占い（クラシック版）")
 st.markdown("心を落ち着けて、ボタンを押してください。運命のカードが示されます。")
 
-# --- カードのデータ（AIを使わず、ここに辞書として持っておく） ---
+# --- カードの画像URLリスト（パブリックドメインのウェイト版） ---
+TAROT_IMAGES = {
+    "0. 愚者": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
+    "1. 魔術師": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
+    "2. 女教皇": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
+    "3. 女帝": "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg",
+    "4. 皇帝": "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg",
+    "5. 法王": "https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg",
+    "6. 恋人": "https://upload.wikimedia.org/wikipedia/commons/3/33/RWS_Tarot_06_Lovers.jpg",
+    "7. 戦車": "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg",
+    "8. 力": "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg",
+    "9. 隠者": "https://upload.wikimedia.org/wikipedia/commons/4/4d/RWS_Tarot_09_Hermit.jpg",
+    "10. 運命の輪": "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg",
+    "11. 正義": "https://upload.wikimedia.org/wikipedia/commons/e/e0/RWS_Tarot_11_Justice.jpg",
+    "12. 吊るされた男": "https://upload.wikimedia.org/wikipedia/commons/2/2b/RWS_Tarot_12_Hanged_Man.jpg",
+    "13. 死神": "https://upload.wikimedia.org/wikipedia/commons/d/d7/RWS_Tarot_13_Death.jpg",
+    "14. 節制": "https://upload.wikimedia.org/wikipedia/commons/f/f8/RWS_Tarot_14_Temperance.jpg",
+    "15. 悪魔": "https://upload.wikimedia.org/wikipedia/commons/5/55/RWS_Tarot_15_Devil.jpg",
+    "16. 塔": "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg",
+    "17. 星": "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg",
+    "18. 月": "https://upload.wikimedia.org/wikipedia/commons/7/7f/RWS_Tarot_18_Moon.jpg",
+    "19. 太陽": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg",
+    "20. 審判": "https://upload.wikimedia.org/wikipedia/commons/d/dd/RWS_Tarot_20_Judgement.jpg",
+    "21. 世界": "https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg"
+}
+
+# --- カードの意味データ ---
 TAROT_DATA = {
     "0. 愚者": "【意味】始まり、自由、純粋、冒険\n【アドバイス】心のままに新しい一歩を踏み出しましょう。",
     "1. 魔術師": "【意味】創造、自信、スキルの発揮\n【アドバイス】あなたには十分な能力があります。自信を持って。",
@@ -53,19 +79,20 @@ if submit_button:
         # カードをランダムに選ぶ
         card_name = random.choice(list(TAROT_DATA.keys()))
         card_result = TAROT_DATA[card_name]
+        card_image_url = TAROT_IMAGES[card_name]
         position = random.choice(["正位置", "逆位置"])
         
         st.divider()
         col1, col2 = st.columns([1, 2])
         
         with col1:
-            # カード画像（プレースホルダー）
-            st.image("https://placehold.co/200x350/222/FFF?text=Tarot", caption=card_name)
+            # ここで実際のタロット画像を表示します
+            # 逆位置の場合は画像をひっくり返す設定も可能です（今回はシンプルにそのまま表示）
+            st.image(card_image_url, caption=card_name)
         
         with col2:
             st.subheader(f"🎴 結果: {card_name} ({position})")
             st.info(card_result)
             
-            # 逆位置の場合の補足メッセージ
             if position == "逆位置":
-                st.caption("※逆位置が出ました。本来の意味が過剰になったり、不足したりしているサインです。アドバイスをより慎重に捉えてください。")
+                st.caption("※逆位置が出ました。意味が弱まったり、逆の意味になったりします。注意深く読み解いてください。")
