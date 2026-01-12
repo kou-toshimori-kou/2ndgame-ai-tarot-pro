@@ -1,7 +1,7 @@
 import streamlit as st
 import random
 import time
-import requests  # 通信用の道具を追加
+import requests
 
 # --- ページ設定 ---
 st.set_page_config(
@@ -14,19 +14,19 @@ st.set_page_config(
 def send_line_notify(message):
     try:
         url = "https://notify-api.line.me/api/notify"
-        token = st.secrets["LINE_TOKEN"] # Secretsからトークンを取得
-        headers = {"Authorization": "Bearer " + token}
-        payload = {"message": message}
-        requests.post(url, headers=headers, data=payload)
+        if "LINE_TOKEN" in st.secrets:
+            token = st.secrets["LINE_TOKEN"]
+            headers = {"Authorization": "Bearer " + token}
+            payload = {"message": message}
+            requests.post(url, headers=headers, data=payload)
     except Exception as e:
-        # 通知に失敗してもアプリは止めない（ユーザーにはバレないようにする）
         print(f"LINE通知エラー: {e}")
 
 # --- タイトル ---
 st.title("🃏 利守航のタロット占い")
 st.markdown("心を落ち着けてボタンを押してください。\n利守航からの運命のメッセージが届きます。")
 
-# --- 画像リスト ---
+# --- 画像リスト（修正版） ---
 TAROT_IMAGES = {
     "0. 愚者": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
     "1. 魔術師": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
@@ -34,7 +34,8 @@ TAROT_IMAGES = {
     "3. 女帝": "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg",
     "4. 皇帝": "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg",
     "5. 法王": "https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg",
-    "6. 恋人": "https://upload.wikimedia.org/wikipedia/commons/3/33/RWS_Tarot_06_Lovers.jpg",
+    # ★修正：恋人のURLを確実なものに変更
+    "6. 恋人": "https://upload.wikimedia.org/wikipedia/en/d/db/RWS_Tarot_06_Lovers.jpg",
     "7. 戦車": "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg",
     "8. 力": "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg",
     "9. 隠者": "https://upload.wikimedia.org/wikipedia/commons/4/4d/RWS_Tarot_09_Hermit.jpg",
@@ -80,13 +81,18 @@ TAROT_DATA = {
 
 # --- ユーザー入力 ---
 with st.form(key='tarot_form'):
+    user_name = st.text_input("お名前（ニックネーム）", placeholder="ここにお名前を入力してください")
     user_input = st.text_area("相談内容（心の中で利守航に問いかけてください）", height=100)
     submit_button = st.form_submit_button(label='運命のカードを引く')
 
 # --- 占いの実行 ---
 if submit_button:
-    # 演出
-    with st.spinner('利守航がカードを選んでいます...'):
+    # 名前が空欄の場合は「名無しさん」にする
+    if not user_name:
+        user_name = "名無し"
+
+    # 演出（1.5秒待つ）
+    with st.spinner(f'{user_name}さんの運命を、利守航が占っています...'):
         time.sleep(1.5)
         
         # カードをランダムに選ぶ
@@ -95,11 +101,9 @@ if submit_button:
         card_image_url = TAROT_IMAGES[card_name]
         position = random.choice(["正位置", "逆位置"])
         
-        # ★ここでLINEに通知を送る
-        if user_input:
-            notification_message = f"\n【相談着信】\n相談内容: {user_input}\n結果: {card_name} ({position})"
-            send_line_notify(notification_message)
-        
+        # ---------------------------------------------------------
+        # ★ここが変更点：先に結果を画面に出す（ユーザーを待たせない）
+        # ---------------------------------------------------------
         st.divider()
         col1, col2 = st.columns([1, 2])
         
@@ -112,3 +116,10 @@ if submit_button:
             
             if position == "逆位置":
                 st.caption("※逆位置が出ました。利守航からのメッセージを、少し慎重に受け取ってください。")
+
+        # ---------------------------------------------------------
+        # ★変更点：画面表示が終わった「後」に、裏でLINE通知を送る
+        # ---------------------------------------------------------
+        if user_input:
+            notification_message = f"\n【相談着信】\n相談者: {user_name} 様\n内容: {user_input}\n結果: {card_name} ({position})"
+            send_line_notify(notification_message)
